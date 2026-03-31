@@ -1,0 +1,16 @@
+FROM debian:13.4@sha256:55a15a112b42be10bfc8092fcc40b6748dc236f7ef46a358d9392b339e9d60e8
+ARG BITWARDEN_VERSION="2026.2.0"
+ENV BW_PORT=8087
+
+ADD https://github.com/bitwarden/clients/releases/download/cli-v${BITWARDEN_VERSION}/bw-oss-linux-${BITWARDEN_VERSION}.zip /tmp/
+RUN apt-get -y update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends 7zip gosu && \
+    7z x /tmp/*.zip -o/tmp/\* && \
+    mv /tmp/bw-oss-linux-${BITWARDEN_VERSION}/bw /usr/local/bin && \
+    rm -r /tmp/bw-oss-linux-*
+COPY entrypoint.sh /entrypoint.sh
+
+EXPOSE ${BW_PORT}/tcp
+WORKDIR /home/bitwarden
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/local/bin/bw","serve","--port","${BW_PORT}","--hostname","all"]
