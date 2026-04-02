@@ -8,8 +8,11 @@ BW_SERVER=${BW_SERVER}
 BW_CLIENTID=${BW_CLIENTID}
 BW_CLIENTSECRET=${BW_CLIENTSECRET}
 
-if [[ ${BW_CLIENTID} == "" || ${BW_CLIENTSECRET} == "" ]]; then
-    echo "Error: BW_CLIENTID and BW_CLIENTSECRET env variable should be set."
+if [[ "${BW_CLIENTID}" == "" ]]; then
+    echo "Error: BW_CLIENTID env variable should be set."
+    exit 1
+elif [[ "${BW_CLIENTSECRET}" == "" ]]; then
+    echo "Error: BW_CLIENTSECRET env variable should be set."
     exit 1
 fi
 
