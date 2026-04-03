@@ -1,5 +1,5 @@
 FROM debian:13.4@sha256:55a15a112b42be10bfc8092fcc40b6748dc236f7ef46a358d9392b339e9d60e8
-ARG BITWARDEN_VERSION="2026.2.0"
+ARG BITWARDEN_VERSION="2025.12.1"
 ENV BW_PORT=8087
 
 ADD https://github.com/bitwarden/clients/releases/download/cli-v${BITWARDEN_VERSION}/bw-oss-linux-${BITWARDEN_VERSION}.zip /tmp/
