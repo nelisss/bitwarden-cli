@@ -1,5 +1,7 @@
 # Bitwarden CLI docker
 
+*Unofficial, no association with Bitwarden*
+
 This repository contains a Dockerfile to run the Bitwarden CLI client, bw, and expose an API via the `bw serve` command.
 
 ## Build
