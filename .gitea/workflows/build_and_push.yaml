@@ -95,4 +95,4 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ${{ steps.meta.output.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
