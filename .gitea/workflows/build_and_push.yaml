@@ -23,14 +23,14 @@ jobs:
       - name: Test new image - Bitwarden with custom uid, gid and port
         run: |
           docker run --rm -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_PASSWORD}} \
+          -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_SECRET}} \
           -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
           ${{ env.TEST_TAG }}
 
       - name: Test new image - self-hosted Vaultwarden
         run: |
           docker run --rm -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_PASSWORD}} \
+          -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
           -e BW_SERVER=${{ vars.VAULTWARDEN_ADDRESS }} \
           ${{ env.TEST_TAG }}
 
