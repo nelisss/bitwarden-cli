@@ -103,10 +103,13 @@ jobs:
             echo ${{ vars.DOCKER_REGISTRY_ADDRESS }}/"${line}"
           done <<< "${META_OUTPUT}"
           )
-          echo "output=${output}" >> "${GITHUB_OUTPUT}"
+          output="${output//'%'/'%25'}"
+          output="${output//$'\n'/'%0A'}"
+          output="${output//$'\r'/'%0D'}"
+          echo "::set-output name=content::$output"
 
       - name: Print output 2
-        run: echo ${{ steps.output.outputs.output }}
+        run: echo ${{ steps.output.outputs.content }}
 
 #      - name: Push image to registry
 #        uses: docker/build-push-action@v7
