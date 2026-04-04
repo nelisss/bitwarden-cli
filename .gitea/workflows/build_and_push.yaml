@@ -14,6 +14,11 @@ jobs:
     env:
       TEST_TAG: bitwarden-api:test
     steps:
+      - name: Check image
+        uses: docker/build-push-action@v7
+        with:
+          call: check
+
       - name: Build image for testing
         uses: docker/build-push-action@v7
         with:
