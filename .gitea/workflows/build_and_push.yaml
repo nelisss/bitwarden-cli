@@ -56,7 +56,9 @@ jobs:
       - name: Remove container
         if: always()
         run: |
-          docker container rm -f bitwarden-cli
+          if ( docker ps | grep bitwarden-cli > /dev/null ); then
+            docker container rm -f bitwarden-cli
+          fi
 
       - name: Set up image metadata
         id: meta
