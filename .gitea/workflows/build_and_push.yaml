@@ -23,6 +23,7 @@ jobs:
       - name: Build image for testing
         uses: docker/build-push-action@v7
         with:
+          no-cache: true
           load: true
           tags: ${{ env.TEST_TAG }}
 
@@ -95,4 +96,5 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
+          no-cache: true
           tags: ${{ steps.meta.outputs.tags }}
