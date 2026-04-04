@@ -13,4 +13,4 @@ COPY entrypoint.sh /entrypoint.sh
 EXPOSE ${BW_PORT}/tcp
 WORKDIR /home/bitwarden
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/local/bin/bw","serve","--port","${BW_PORT}","--hostname","all"]
+CMD ["sh","-c","bw serve --port=${BW_PORT} --hostname=all"]
