@@ -36,6 +36,7 @@ jobs:
           -p 127.0.0.1:8087:1234 \
           ${{ env.TEST_TAG }}
           sleep 30
+          docker logs bitwarden-cli
           curl http://127.0.0.1:8087/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
@@ -49,6 +50,7 @@ jobs:
           -p 127.0.0.1:8087:8087 \
           ${{ env.TEST_TAG }}
           sleep 30
+          docker logs bitwarden-cli
           curl http://127.0.0.1:8087/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
