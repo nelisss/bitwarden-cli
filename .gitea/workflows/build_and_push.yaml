@@ -84,6 +84,8 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
+          flavor: |
+            prefix=${{ vars.DOCKER_REGISTRY_ADDRESS }}/
 
       - name: Log in to registry
         uses: docker/login-action@v4
