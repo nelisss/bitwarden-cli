@@ -9,7 +9,8 @@ on:
   pull_request:
 
 jobs:
-  docker:
+  build_test_push:
+    name: Build, test and push
     runs-on: services1
     env:
       TEST_TAG: bitwarden-api:test
@@ -77,3 +78,13 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
+  
+  clean_up:
+    name: Clean up
+    runs-on: services1
+    steps:
+      - name: Remove container
+        run: |
+          docker container rm -f bitwarden-cli
+
+
