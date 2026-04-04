@@ -26,6 +26,13 @@ jobs:
           load: true
           tags: ${{ env.TEST_TAG }}
 
+      - name: Remove container
+        if: always()
+        run: |
+          if ( docker ps | grep bitwarden-cli > /dev/null ); then
+            docker container rm -f bitwarden-cli
+          fi
+
       - name: Test new image - Bitwarden with custom uid, gid and port
         run: |
           docker run --name bitwarden-cli -d \
@@ -44,9 +51,10 @@ jobs:
       - name: Test new image - self-hosted Vaultwarden
         run: |
           docker run --name bitwarden-cli -d \
+          --dns ${{ vars.LOCAL_DNS_ADDRESS }} \
           -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
           -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
-          -e BW_SERVER=${{ vars.VAULTWARDEN_ADDRESS }} \
+          -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:8087:8087 \
           ${{ env.TEST_TAG }}
           sleep 30
