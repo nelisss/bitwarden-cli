@@ -96,10 +96,12 @@ jobs:
         id: registry_tags
         env:
           META_OUTPUT: ${{ steps.meta.outputs.tags }}
+          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
         run: |
+          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
           output=$(
           while read line; do
-            echo ${{ vars.DOCKER_REGISTRY_ADDRESS }}/"${line}"
+            echo ${REGISTRY_ADDRESS}/"${line}"
           done <<< "${META_OUTPUT}"
           )
           output="${output//'%'/'%25'}"
