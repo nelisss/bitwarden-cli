@@ -1,5 +1,5 @@
 name: New gitea release
-run-name: Create a new gitea release when a tag is pushed
+run-name: Create a new gitea release on tag push
 on:
   push:
     tags:
@@ -7,6 +7,8 @@ on:
 
 jobs:
   release:
+    name: Create a new release
+    runs-on: services1
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
