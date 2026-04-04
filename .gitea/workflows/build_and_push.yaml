@@ -27,17 +27,30 @@ jobs:
 
       - name: Test new image - Bitwarden with custom uid, gid and port
         run: |
-          docker run --rm -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
+          docker run --name bitwarden-cli -d \
+          -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
           -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_SECRET}} \
           -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
+          -e BW_SERVER=https://vault.bitwarden.eu \
+          -p 127.0.0.1:8087:1234 \
           ${{ env.TEST_TAG }}
+          sleep 30
+          curl http://127.0.0.1:8087/status > /dev/null
+          docker container stop bitwarden-cli
+          docker container rm bitwarden-cli
 
       - name: Test new image - self-hosted Vaultwarden
         run: |
-          docker run --rm -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
+          docker run --name bitwarden-cli -d \
+          -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
           -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
           -e BW_SERVER=${{ vars.VAULTWARDEN_ADDRESS }} \
+          -p 127.0.0.1:8087:8087 \
           ${{ env.TEST_TAG }}
+          sleep 30
+          curl http://127.0.0.1:8087/status > /dev/null
+          docker container stop bitwarden-cli
+          docker container rm bitwarden-cli
 
       - name: Set up image metadata
         id: meta
