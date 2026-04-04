@@ -109,7 +109,7 @@ jobs:
           echo "::set-output name=content::$output"
 
       - name: Print output 2
-        run: echo ${{ steps.output.outputs.content }}
+        run: echo "${{ steps.output.outputs.content }}"
 
 #      - name: Push image to registry
 #        uses: docker/build-push-action@v7
