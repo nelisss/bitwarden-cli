@@ -53,6 +53,11 @@ jobs:
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
 
+      - name: Remove container
+        if: always()
+        run: |
+          docker container rm -f bitwarden-cli
+
       - name: Set up image metadata
         id: meta
         uses: docker/metadata-action@v6
@@ -78,13 +83,3 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-  
-  clean_up:
-    name: Clean up
-    runs-on: services1
-    steps:
-      - name: Remove container
-        run: |
-          docker container rm -f bitwarden-cli
-
-
