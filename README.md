@@ -48,6 +48,6 @@ Deploy the compose file by running `docker compose up -d`
 
 ## Remarks
 
-- Note that the exposed API is authenticated! It's best to only expose the container port to localhost.
+- Note that the exposed API is unauthenticated! It's best to only expose the container port to localhost.
 - I personally use this container with Vaultwarden, which lags behind slightly in terms of Bitwarden version compatibility.
 - API key authentication is the only authentication method.
