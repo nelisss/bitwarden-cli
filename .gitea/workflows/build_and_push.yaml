@@ -93,13 +93,20 @@ jobs:
 #          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Print output
+        id: output
         env:
           META_OUTPUT: ${{ steps.meta.outputs.tags }}
         run: |
           echo "${META_OUTPUT}"
+          output=$(
           while read line; do
             echo ${{ vars.DOCKER_REGISTRY_ADDRESS }}/"${line}"
           done <<< "${META_OUTPUT}"
+          )
+          echo "output=${output}" >> "${GITHUB_OUTPUT}"
+
+      - name: Print output 2
+        run: echo ${{ steps.output.outputs.output }}
 
 #      - name: Push image to registry
 #        uses: docker/build-push-action@v7
