@@ -8,8 +8,8 @@ on:
       - "v*.*.*"
 
 jobs:
-  build_test_push:
-    name: Build, test and push
+  alpine:
+    name: Build, test and push alpine image
     runs-on: services1
     env:
       TEST_TAG: bitwarden-api:test
@@ -17,17 +17,17 @@ jobs:
       - name: Check image
         uses: docker/build-push-action@v7
         with:
+          file: Dockerfile.alpine
           call: check
 
       - name: Build image for testing
         uses: docker/build-push-action@v7
         with:
-          no-cache: true
+          file: Dockerfile.alpine
           load: true
           tags: ${{ env.TEST_TAG }}
 
       - name: Remove container
-        if: always()
         run: |
           if ( docker ps -a | grep bitwarden-cli > /dev/null ); then
             docker container rm -f bitwarden-cli
@@ -42,7 +42,7 @@ jobs:
           -e BW_SERVER=https://vault.bitwarden.eu \
           -p 127.0.0.1:8087:1234 \
           ${{ env.TEST_TAG }}
-          sleep 30
+          sleep 10
           docker logs bitwarden-cli
           curl http://127.0.0.1:8087/status > /dev/null
           docker container stop bitwarden-cli
@@ -57,7 +57,106 @@ jobs:
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:8087:8087 \
           ${{ env.TEST_TAG }}
-          sleep 30
+          sleep 10
+          docker logs bitwarden-cli
+          curl http://127.0.0.1:8087/status > /dev/null
+          docker container stop bitwarden-cli
+          docker container rm bitwarden-cli
+
+      - name: Remove container
+        if: always()
+        run: |
+          if ( docker ps -a | grep bitwarden-cli > /dev/null ); then
+            docker container rm -f bitwarden-cli
+          fi
+
+      - name: Prepare registry address for image tags
+        id: registry_tags
+        env:
+          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
+        run: |
+          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
+          echo "registry_address=${REGISTRY_ADDRESS}" >> "${GITHUB_OUTPUT}"
+
+      - name: Set up image metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: |
+            ${{ steps.registry_tags.outputs.registry_address }}/nelisss/bitwarden-cli
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=edge
+          flavor: |
+            suffix=-alpine,onlatest=true
+
+      - name: Log in to registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      - name: Push image to registry
+        uses: docker/build-push-action@v7
+        with:
+          file: Dockerfile.alpine
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+  debian:
+    name: Build, test and push debian image
+    runs-on: services1
+    env:
+      TEST_TAG: bitwarden-api:test
+    steps:
+      - name: Check image
+        uses: docker/build-push-action@v7
+        with:
+          file: Dockerfile.debian
+          call: check
+
+      - name: Build image for testing
+        uses: docker/build-push-action@v7
+        with:
+          file: Dockerfile.debian
+          load: true
+          tags: ${{ env.TEST_TAG }}
+
+      - name: Remove container
+        run: |
+          if ( docker ps -a | grep bitwarden-cli > /dev/null ); then
+            docker container rm -f bitwarden-cli
+          fi
+
+      - name: Test new image - Bitwarden with custom uid, gid and port
+        run: |
+          docker run --name bitwarden-cli -d \
+          -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
+          -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_SECRET}} \
+          -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
+          -e BW_SERVER=https://vault.bitwarden.eu \
+          -p 127.0.0.1:8087:1234 \
+          ${{ env.TEST_TAG }}
+          sleep 10
+          docker logs bitwarden-cli
+          curl http://127.0.0.1:8087/status > /dev/null
+          docker container stop bitwarden-cli
+          docker container rm bitwarden-cli
+
+      - name: Test new image - self-hosted Vaultwarden
+        run: |
+          docker run --name bitwarden-cli -d \
+          --dns ${{ vars.LOCAL_DNS_ADDRESS }} \
+          -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
+          -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
+          -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
+          -p 127.0.0.1:8087:8087 \
+          ${{ env.TEST_TAG }}
+          sleep 10
           docker logs bitwarden-cli
           curl http://127.0.0.1:8087/status > /dev/null
           docker container stop bitwarden-cli
@@ -101,6 +200,6 @@ jobs:
       - name: Push image to registry
         uses: docker/build-push-action@v7
         with:
+          file: Dockerfile.debian
           push: true
-          no-cache: true
           tags: ${{ steps.meta.outputs.tags }}
