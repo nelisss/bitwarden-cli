@@ -1,0 +1,25 @@
+FROM debian:13.4@sha256:55a15a112b42be10bfc8092fcc40b6748dc236f7ef46a358d9392b339e9d60e8 AS build
+ARG BITWARDEN_VERSION="2025.12.1"
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
+    apt-get -y install git nodejs npm && \
+    git clone --depth 1 --branch cli-v${BITWARDEN_VERSION} https://github.com/bitwarden/clients.git && \ 
+    cd clients && \
+    npm ci && \
+    cd apps/cli && \
+    sed -iE 's/pkg . --targets linux-x64/pkg . --targets alpine-x64/' package.json && \ 
+    npm run dist:oss:lin && \
+    mv dist/oss/linux/bw /tmp
+
+FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
+ENV BW_PORT=8087
+
+COPY --from=build /tmp/bw /usr/local/bin/bw
+COPY entrypoint.sh /entrypoint.sh
+RUN apk --interactive=no update && \
+    apk --interactive=no add gosu bash
+
+EXPOSE ${BW_PORT}/tcp
+WORKDIR /home/bitwarden
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["sh","-c","bw serve --port=${BW_PORT} --hostname=all"]

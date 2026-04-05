@@ -4,9 +4,18 @@
 
 This repository contains a Dockerfile to run the Bitwarden CLI client, bw, and expose an API via the `bw serve` command.
 
+## Variants
+
+Two distribution options are available: Debian or Alpine.
+
+| Characteristic | Debian | Alpine |
+| --- | --- | --- |
+| Disk usage | ~500MB | ~200MB |
+| Content size | ~150MB | ~50MB |
+
 ## Build
 
-Clone the repository and run `docker build --tag bitwarden-cli:latest .` from within the repository directory.
+Clone the repository, choose a distribution to use and run `docker build -f Dockerfile.[alpine/debian] --tag bitwarden-cli .` from within the repository directory.
 
 ## Usage
 
@@ -15,7 +24,7 @@ Clone the repository and run `docker build --tag bitwarden-cli:latest .` from wi
 Run the image:
 
 ```
-docker run --rm -e BW_CLIENTID=<client_id> -e BW_CLIENTSECRET=<client_secret> -p 127.0.0.1:8087:8087 bitwarden-api:latest
+docker run --rm -e BW_CLIENTID=<client_id> -e BW_CLIENTSECRET=<client_secret> -p 127.0.0.1:8087:8087 bitwarden-api
 ```
 
 ### Docker compose
@@ -48,6 +57,7 @@ Deploy the compose file by running `docker compose up -d`
 
 ## Remarks
 
+- Information on how to create a personal API key for Bitwarden can be found [here](https://bitwarden.com/help/personal-api-key/).
 - Note that the exposed API is unauthenticated! It's best to only expose the container port to localhost.
-- I personally use this container with Vaultwarden, which lags behind slightly in terms of Bitwarden version compatibility.
-- API key authentication is the only authentication method.
+- I personally use this container with Vaultwarden, which lags behind slightly in terms of Bitwarden version compatibility. You can modify the Bitwarden CLI client version yourself during the build by supplying the `--build-arg BITWARDEN_VERSION="xxxx.xx.xx"` to the `docker build` command. The latest client releases can be found [here](https://github.com/bitwarden/clients/releases).
+- API key authentication is the only implemented authentication method.

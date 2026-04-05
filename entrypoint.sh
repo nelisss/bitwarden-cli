@@ -16,8 +16,13 @@ elif [[ "${BW_CLIENTSECRET}" == "" ]]; then
     exit 1
 fi
 
-groupadd -f -g ${BW_GID} bitwarden
-useradd -u ${BW_UID} -g ${BW_GID} -s /bin/bash bitwarden
+if ( cat /etc/issue | grep "Debian" > /dev/null ); then
+    groupadd -f -g ${BW_GID} bitwarden
+    useradd -u ${BW_UID} -g ${BW_GID} -s /bin/bash bitwarden
+else
+    addgroup --gid ${BW_GID} bitwarden
+    adduser -D -u ${BW_UID} -G bitwarden -s /bin/bash bitwarden
+fi
 chown -R ${BW_UID}:${BW_GID} /home/bitwarden
 
 gosu bitwarden bash -c 'if [[ "${BW_SERVER}" != "" ]]; then bw config server ${BW_SERVER}; fi'
