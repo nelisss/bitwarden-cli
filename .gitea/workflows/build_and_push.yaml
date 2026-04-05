@@ -71,12 +71,20 @@ jobs:
             docker container rm -f bitwarden-cli
           fi
 
+      - name: Prepare registry address for image tags
+        id: registry_tags
+        env:
+          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
+        run: |
+          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
+          echo "registry_address=${REGISTRY_ADDRESS}" >> "${GITHUB_OUTPUT}"
+
       - name: Set up image metadata
         id: meta
         uses: docker/metadata-action@v6
         with:
           images: |
-            nelisss/bitwarden-cli
+            ${{ steps.registry_tags.outputs.registry_address }}/nelisss/bitwarden-cli
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -92,26 +100,9 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
-      - name: Add registry address to tags
-        id: registry_tags
-        env:
-          META_OUTPUT: ${{ steps.meta.outputs.tags }}
-          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
-        run: |
-          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
-          output=$(
-          while read line; do
-            echo ${REGISTRY_ADDRESS}/"${line}"
-          done <<< "${META_OUTPUT}"
-          )
-          output="${output//'%'/'%25'}"
-          output="${output//$'\n'/'%0A'}"
-          output="${output//$'\r'/'%0D'}"
-          echo "::set-output name=content::$output"
-
       - name: Push image to registry
         uses: docker/build-push-action@v7
         with:
           push: true
           no-cache: true
-          tags: ${{ steps.registry_tags.outputs.content }}
+          tags: ${{ steps.meta.outputs.tags }}
