@@ -4,7 +4,7 @@ ENV BW_PORT=8087
 
 ADD https://github.com/bitwarden/clients/releases/download/cli-v${BITWARDEN_VERSION}/bw-oss-linux-${BITWARDEN_VERSION}.zip /tmp/
 RUN apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends 7zip gosu && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends 7zip gosu wget && \
     7z x /tmp/*.zip -o/tmp/\* && \
     mv /tmp/bw-oss-linux-${BITWARDEN_VERSION}/bw /usr/local/bin && \
     rm -r /tmp/bw-oss-linux-*
@@ -14,3 +14,4 @@ EXPOSE ${BW_PORT}/tcp
 WORKDIR /home/bitwarden
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["sh","-c","bw serve --port=${BW_PORT} --hostname=all"]
+HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --start-interval=10s --retries=3 CMD wget http://localhost:${BW_PORT}/status
