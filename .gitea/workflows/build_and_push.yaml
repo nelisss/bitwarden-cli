@@ -43,7 +43,7 @@ jobs:
           -e BW_SERVER=https://vault.bitwarden.eu \
           -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
@@ -59,7 +59,7 @@ jobs:
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
@@ -144,7 +144,7 @@ jobs:
           -e BW_SERVER=https://vault.bitwarden.eu \
           -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
@@ -160,7 +160,7 @@ jobs:
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
