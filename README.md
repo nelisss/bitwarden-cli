@@ -50,7 +50,7 @@ Deploy the compose file by running `docker compose up -d`
 
 - BW_CLIENTID: client id corresponding to your API key (required).
 - BW_CLIENTSECRET: client secret corresponding to your API key (required).
-- BW_MASTERPASSWORD: master password of your account (required).
+- BW_MASTERPASSWORD: master password of your account. If not provided, you'll have to unlock the vault via the API, i.e. POST http://localhost:8087/unlock?password=<master\_password>.
 - BW_PORT: customize the port that the API is served on.
 - BW_SERVER: custom server address to connect to (will connect to Bitwarden servers by default).
 - BW_UID: custom uid the container will run as.
