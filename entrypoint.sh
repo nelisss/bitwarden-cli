@@ -20,13 +20,32 @@ elif [[ "${BW_MASTERPASSWORD}" == "" ]]; then
     exit 1
 fi
 
-if ( cat /etc/issue | grep "Debian" > /dev/null ); then
-    groupadd -f -g ${BW_GID} bitwarden
-    useradd -u ${BW_UID} -g ${BW_GID} -s /bin/bash bitwarden
+if ( cat /etc/group | grep -E "^bitwarden:" > /dev/null ); then
+    if ( ! cat /etc/group | grep "bitwarden:x:${BW_GID}" > /dev/null ); then
+        echo "Group bitwarden exists with different GID: changing GID"
+        groupmod -g ${BW_GID} bitwarden
+    fi
 else
-    addgroup --gid ${BW_GID} bitwarden
-    adduser -D -u ${BW_UID} -G bitwarden -s /bin/bash bitwarden
+    if ( cat /etc/issue | grep "Debian" > /dev/null ); then
+        groupadd -g ${BW_GID} bitwarden
+    else
+        addgroup --gid ${BW_GID} bitwarden
+    fi
 fi
+if ( cat /etc/passwd | grep -E "^bitwarden:" > /dev/null); then
+    if ( ! cat /etc/passwd | grep "bitwarden:x:${BW_UID}:${BW_GID}" > /dev/null); then
+        echo "User bitwarden exists with different UID or GID: changing UID/GID"
+        usermod -u ${BW_UID} bitwarden
+        groupmod -g ${BW_GID} bitwarden
+    fi
+else
+    if ( cat /etc/issue | grep "Debian" > /dev/null ); then
+        useradd -u ${BW_UID} -g ${BW_GID} -s /bin/bash bitwarden
+    else
+        adduser -D -u ${BW_UID} -G bitwarden -s /bin/bash bitwarden
+    fi
+fi
+
 chown -R ${BW_UID}:${BW_GID} /home/bitwarden
 
 gosu bitwarden bash -c 'if [[ "${BW_SERVER}" != "" ]]; then bw config server ${BW_SERVER}; fi'
