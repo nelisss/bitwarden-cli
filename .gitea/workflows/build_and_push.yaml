@@ -36,15 +36,16 @@ jobs:
       - name: Test new image - Bitwarden with custom uid, gid and port
         run: |
           docker run --name bitwarden-cli -d \
-          -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_SECRET}} \
+          -e BW_CLIENTID='${{ secrets.BITWARDEN_API_USERNAME }}' \
+          -e BW_CLIENTSECRET='${{ secrets.BITWARDEN_API_SECRET }}' \
+          -e BW_MASTERPASSWORD='${{ secrets.BITWARDEN_MASTER_PASSWORD }}' \
           -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
           -e BW_SERVER=https://vault.bitwarden.eu \
-          -p 127.0.0.1:8087:1234 \
+          -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
-          curl http://127.0.0.1:8087/status > /dev/null
+          curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
 
@@ -52,14 +53,15 @@ jobs:
         run: |
           docker run --name bitwarden-cli -d \
           --dns ${{ vars.LOCAL_DNS_ADDRESS }} \
-          -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
+          -e BW_CLIENTID='${{ secrets.VAULTWARDEN_API_USERNAME }}' \
+          -e BW_CLIENTSECRET='${{ secrets.VAULTWARDEN_API_SECRET }}' \
+          -e BW_MASTERPASSWORD='${{ secrets.VAULTWARDEN_MASTER_PASSWORD }}' \
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
-          -p 127.0.0.1:8087:8087 \
+          -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
-          curl http://127.0.0.1:8087/status > /dev/null
+          curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
 
@@ -135,15 +137,16 @@ jobs:
       - name: Test new image - Bitwarden with custom uid, gid and port
         run: |
           docker run --name bitwarden-cli -d \
-          -e BW_CLIENTID=${{ secrets.BITWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.BITWARDEN_API_SECRET}} \
+          -e BW_CLIENTID='${{ secrets.BITWARDEN_API_USERNAME }}' \
+          -e BW_CLIENTSECRET='${{ secrets.BITWARDEN_API_SECRET }}' \
+          -e BW_MASTERPASSWORD'=${{ secrets.BITWARDEN_MASTER_PASSWORD }}' \
           -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
           -e BW_SERVER=https://vault.bitwarden.eu \
-          -p 127.0.0.1:8087:1234 \
+          -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
-          curl http://127.0.0.1:8087/status > /dev/null
+          curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
 
@@ -151,14 +154,15 @@ jobs:
         run: |
           docker run --name bitwarden-cli -d \
           --dns ${{ vars.LOCAL_DNS_ADDRESS }} \
-          -e BW_CLIENTID=${{ secrets.VAULTWARDEN_API_USERNAME }} \
-          -e BW_CLIENTSECRET=${{ secrets.VAULTWARDEN_API_SECRET}} \
+          -e BW_CLIENTID='${{ secrets.VAULTWARDEN_API_USERNAME }}' \
+          -e BW_CLIENTSECRET='${{ secrets.VAULTWARDEN_API_SECRET }}' \
+          -e BW_MASTERPASSWORD='${{ secrets.VAULTWARDEN_MASTER_PASSWORD }}' \
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
-          -p 127.0.0.1:8087:8087 \
+          -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 10
+          sleep 20
           docker logs bitwarden-cli
-          curl http://127.0.0.1:8087/status > /dev/null
+          curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
 
