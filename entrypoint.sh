@@ -15,9 +15,6 @@ if [[ "${BW_CLIENTID}" == "" ]]; then
 elif [[ "${BW_CLIENTSECRET}" == "" ]]; then
     echo "Error: BW_CLIENTSECRET env variable should be set."
     exit 1
-elif [[ "${BW_MASTERPASSWORD}" == "" ]]; then
-    echo "Error: BW_MASTERPASSWORD env variable should be set."
-    exit 1
 fi
 
 if ( cat /etc/group | grep -E "^bitwarden:" > /dev/null ); then
@@ -50,6 +47,9 @@ chown -R ${BW_UID}:${BW_GID} /home/bitwarden
 
 gosu bitwarden bash -c 'if [[ "${BW_SERVER}" != "" ]]; then bw config server ${BW_SERVER}; fi'
 gosu bitwarden bw login --apikey
-export $( gosu bitwarden bw unlock --passwordenv BW_MASTERPASSWORD | grep -oE -m 1 'BW_SESSION=(.*==)"' | sed 's/"//g' )
+
+if [[ "${BW_MASTERPASSWORD}" != "" ]]; then
+    export $( gosu bitwarden bw unlock --passwordenv BW_MASTERPASSWORD | grep -oE -m 1 'BW_SESSION=(.*==)"' | sed 's/"//g' )
+fi
 
 exec gosu bitwarden "$@"
