@@ -31,6 +31,6 @@ chown -R ${BW_UID}:${BW_GID} /home/bitwarden
 
 gosu bitwarden bash -c 'if [[ "${BW_SERVER}" != "" ]]; then bw config server ${BW_SERVER}; fi'
 gosu bitwarden bw login --apikey
-export BW_SESSION=$( bw unlock --passwordenv BW_MASTERPASSWORD | grep -oE -m 1 '(?<=BW_SESSION=").*==(?=")' )
+export BW_SESSION=$( gosu bitwarden bw unlock --passwordenv BW_MASTERPASSWORD | grep -oE -m 1 '(?<=BW_SESSION=").*==(?=")' )
 
 exec gosu bitwarden "$@"
