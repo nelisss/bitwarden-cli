@@ -77,7 +77,7 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            ${{ steps.registry_tags.outputs.registry_address }}/nelisss/bitwarden-cli
+            ${{ vars.DOCKER_REGISTRY_ADDRESS }}/nelisss/bitwarden-cli
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
@@ -170,7 +170,7 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: |
-            ${{ steps.registry_tags.outputs.registry_address }}/nelisss/bitwarden-cli
+            ${{ vars.DOCKER_REGISTRY_ADDRESS }}/nelisss/bitwarden-cli
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}}
