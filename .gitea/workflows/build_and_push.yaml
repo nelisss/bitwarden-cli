@@ -72,14 +72,6 @@ jobs:
             docker container rm -f bitwarden-cli
           fi
 
-      - name: Prepare registry address for image tags
-        id: registry_tags
-        env:
-          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
-        run: |
-          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
-          echo "registry_address=${REGISTRY_ADDRESS}" >> "${GITHUB_OUTPUT}"
-
       - name: Set up image metadata
         id: meta
         uses: docker/metadata-action@v6
@@ -172,14 +164,6 @@ jobs:
           if ( docker ps -a | grep bitwarden-cli > /dev/null ); then
             docker container rm -f bitwarden-cli
           fi
-
-      - name: Prepare registry address for image tags
-        id: registry_tags
-        env:
-          REGISTRY_ADDRESS_RAW: ${{ vars.DOCKER_REGISTRY_ADDRESS }}
-        run: |
-          REGISTRY_ADDRESS=${REGISTRY_ADDRESS_RAW/http:\/\//}
-          echo "registry_address=${REGISTRY_ADDRESS}" >> "${GITHUB_OUTPUT}"
 
       - name: Set up image metadata
         id: meta
