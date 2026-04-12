@@ -45,7 +45,12 @@ fi
 
 chown -R ${BW_UID}:${BW_GID} /home/bitwarden
 
-gosu bitwarden bash -c 'if [[ "${BW_SERVER}" != "" ]]; then bw config server ${BW_SERVER}; fi'
+if ( ! gosu bitwarden bw status | grep 'status":"unauthenticated' > /dev/null ); then
+    gosu bitwarden bw logout
+fi
+if [[ "${BW_SERVER}" != "" ]]; then 
+    gosu bitwarden bw config server ${BW_SERVER}
+fi
 gosu bitwarden bw login --apikey
 
 if [[ "${BW_MASTERPASSWORD}" != "" ]]; then
