@@ -43,8 +43,18 @@ jobs:
           -e BW_SERVER=https://vault.bitwarden.eu \
           -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 20
-          docker logs bitwarden-cli
+          iter=1
+          while ( ! docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' ); do
+            if [[ $iter == 12 ]]; then
+              echo "Did not become healthy... Logs:"
+              docker logs bitwarden-cli
+              break
+            fi
+            echo "Not yet healthy, current state: $( docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' )"
+            iter=$(( iter + 1 ))
+            sleep 5
+          done
+          docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' > /dev/null
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
@@ -59,8 +69,18 @@ jobs:
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 20
-          docker logs bitwarden-cli
+          iter=1
+          while ( ! docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' ); do
+            if [[ $iter == 12 ]]; then
+              echo "Did not become healthy... Logs:"
+              docker logs bitwarden-cli
+              break
+            fi
+            echo "Not yet healthy, current state: $( docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' )"
+            iter=$(( iter + 1 ))
+            sleep 5
+          done
+          docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' > /dev/null
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
@@ -131,13 +151,23 @@ jobs:
           docker run --name bitwarden-cli -d \
           -e BW_CLIENTID='${{ secrets.BITWARDEN_API_USERNAME }}' \
           -e BW_CLIENTSECRET='${{ secrets.BITWARDEN_API_SECRET }}' \
-          -e BW_MASTERPASSWORD'=${{ secrets.BITWARDEN_MASTER_PASSWORD }}' \
+          -e BW_MASTERPASSWORD='${{ secrets.BITWARDEN_MASTER_PASSWORD }}' \
           -e BW_UID=1234 -e BW_GID=1234 -e BW_PORT=1234 \
           -e BW_SERVER=https://vault.bitwarden.eu \
           -p 127.0.0.1:1234:1234 \
           ${{ env.TEST_TAG }}
-          sleep 20
-          docker logs bitwarden-cli
+          iter=1
+          while ( ! docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' ); do
+            if [[ $iter == 12 ]]; then
+              echo "Did not become healthy... Logs:"
+              docker logs bitwarden-cli
+              break
+            fi
+            echo "Not yet healthy, current state: $( docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' )"
+            iter=$(( iter + 1 ))
+            sleep 5
+          done
+          docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' > /dev/null
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
@@ -152,8 +182,18 @@ jobs:
           -e BW_SERVER=${{ secrets.VAULTWARDEN_ADDRESS }} \
           -p 127.0.0.1:1234:8087 \
           ${{ env.TEST_TAG }}
-          sleep 20
-          docker logs bitwarden-cli
+          iter=1
+          while ( ! docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' ); do
+            if [[ $iter == 12 ]]; then
+              echo "Did not become healthy... Logs:"
+              docker logs bitwarden-cli
+              break
+            fi
+            echo "Not yet healthy, current state: $( docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' )"
+            iter=$(( iter + 1 ))
+            sleep 5
+          done
+          docker inspect bitwarden-cli -f '{{ .State.Health.Status }}' | grep -E '^healthy$' > /dev/null
           curl http://127.0.0.1:1234/status > /dev/null
           docker container stop bitwarden-cli
           docker container rm bitwarden-cli
