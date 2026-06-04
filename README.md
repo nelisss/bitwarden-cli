@@ -62,3 +62,4 @@ Deploy the compose file by running `docker compose up -d`
 - Note that the exposed API is unauthenticated! It's best to only expose the container port to localhost.
 - I personally use this container with Vaultwarden, which lags behind slightly in terms of Bitwarden version compatibility. You can modify the Bitwarden CLI client version yourself during the build by supplying the `--build-arg BITWARDEN_VERSION="xxxx.xx.xx"` to the `docker build` command. The latest client releases can be found [here](https://github.com/bitwarden/clients/releases).
 - API key authentication is the only implemented authentication method.
+- The Bitwarden API documentation can be found [here](https://bitwarden.com/help/vault-management-api/).
