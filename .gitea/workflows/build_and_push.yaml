@@ -6,6 +6,10 @@ on:
       - "**"
     tags:
       - "v*.*.*"
+    paths:
+      - "Dockerile.alpine"
+      - "Dockerile.debian"
+      - "entrypoint.sh"
 
 jobs:
   alpine:
